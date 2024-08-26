@@ -5,7 +5,7 @@ use std::{
     process,
 };
 
-use args::RustodoArgs;
+use args::{ActionType, RustodoArgs};
 use clap::Parser;
 
 mod args;
@@ -22,6 +22,18 @@ fn main() {
 fn run(args: RustodoArgs) -> Result<(), Box<dyn Error>> {
     let file = get_csv()?;
 
+    match args.action{
+        ActionType::Add(todo) => {
+            write_single_to_csv(&file, todo.to_record())?;
+        }
+        ActionType::List => {
+            todo!()
+        }
+        ActionType::Mark => {
+            todo!()
+        }
+    }
+
     Ok(())
 }
 
@@ -33,6 +45,7 @@ fn get_csv() -> Result<File, Box<dyn Error>> {
         .read(true)
         .write(true)
         .append(true)
+        .create(true)
         .open(path)?;
 
     if file.metadata()?.len() == 0 {

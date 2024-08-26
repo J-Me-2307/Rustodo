@@ -27,3 +27,9 @@ pub struct Task {
     /// Toggles if the task is marked as done.
     pub is_done: bool
 }
+
+impl Task {
+    pub fn to_record(self) -> Vec<String>{
+        vec![self.title, self.is_done.to_string()]
+    }
+}
