@@ -34,6 +34,9 @@ fn run(args: RustodoArgs) -> Result<(), Box<dyn Error>> {
         ActionType::Mark => {
             todo!()
         }
+        ActionType::Reset => {
+            delete_csv()?;
+        }
     }
 
     Ok(())
@@ -98,6 +101,14 @@ fn read_csv(file: File) -> Result<Vec<Task>, Box<dyn Error>> {
     }
 
     Ok(tasks)
+}
+
+fn delete_csv() -> Result<(), Box<dyn Error>> {
+    let path = Path::new("./data.csv");
+
+    std::fs::remove_file(path)?;
+
+    Ok(())
 }
 
 /// Gets the csv file. If the file doesn't exist, it creates one and writes the header to it.

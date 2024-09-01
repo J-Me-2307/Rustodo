@@ -17,26 +17,29 @@ pub enum ActionType {
     /// Mark off a task as done
     Mark,
     /// List your tasks
-    List(ListOptions)
+    List(ListOptions),
+
+    /// Reset your tasks
+    Reset,
 }
 
 #[derive(Debug, Args)]
-pub struct ListOptions{
-        /// Show only tasks that are completed
-        #[clap(short, long)]
-        pub completed: bool,
-    
-        /// Show only tasks that are not completed
-        #[clap(short, long)]
-        pub pending: bool,
-    
-        /// Sort tasks by title
-        #[clap(short='t', long)]
-        pub sort_by_title: bool,
-    
-        /// Reverse the order of tasks
-        #[clap(short, long)]
-        pub reverse: bool,
+pub struct ListOptions {
+    /// Show only tasks that are completed
+    #[clap(short, long)]
+    pub completed: bool,
+
+    /// Show only tasks that are not completed
+    #[clap(short, long)]
+    pub pending: bool,
+
+    /// Sort tasks by title
+    #[clap(short = 't', long)]
+    pub sort_by_title: bool,
+
+    /// Reverse the order of tasks
+    #[clap(short, long)]
+    pub reverse: bool,
 }
 
 #[derive(Debug, Args, Deserialize, Tabled)]
