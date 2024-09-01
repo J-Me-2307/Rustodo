@@ -39,9 +39,14 @@ fn run(args: RustodoArgs) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// Lîsts all tasks that match the options.
+/// Lists all tasks that match the options.
 fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
     let mut tasks_to_show: Vec<Task> = Vec::new();
+
+    if tasks.is_empty() {
+        eprintln!("You currently have no tasks.");
+        return;
+    }
 
     // Get only tasks that match the filter.
     if list_option.completed {
@@ -60,6 +65,13 @@ fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
         tasks_to_show = tasks
     }
 
+    // Check if any tasks with that filter exist.
+    if tasks_to_show.is_empty() {
+        eprintln!("You have no tasks that match the current filter!");
+        return;
+    }
+
+    // Order the tasks depending on the flags.
     if list_option.sort_by_title {
         tasks_to_show.sort_by(|a, b| a.title.cmp(&b.title))
     }
@@ -68,18 +80,14 @@ fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
         tasks_to_show.reverse()
     }
 
-    if tasks_to_show.is_empty() {
-        eprintln!("You have no tasks that apply to the current filter!");
-        return;
-    }
-
+    // pretty print the tasks
     let mut table = Table::new(tasks_to_show);
-
     table.with(Style::rounded());
 
     println!("{}", table)
 }
 
+/// Reads all data from the csv
 fn read_csv(file: File) -> Result<Vec<Task>, Box<dyn Error>> {
     let mut tasks: Vec<Task> = Vec::new();
 
