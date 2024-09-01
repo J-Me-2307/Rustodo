@@ -7,7 +7,7 @@ use std::{
 
 use args::{ActionType, ListOptions, RustodoArgs, Task};
 use clap::Parser;
-use tabled::{settings::{object::Rows, style::BorderColor, Alignment, Modify, Style}, Table};
+use tabled::{settings::Style, Table};
 
 mod args;
 
@@ -45,14 +45,14 @@ fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
 
     // Get only tasks that match the filter.
     if list_option.completed {
-        for task in tasks{
-            if task.is_done{
+        for task in tasks {
+            if task.is_done {
                 tasks_to_show.push(task)
             }
         }
     } else if list_option.pending {
-        for task in tasks{
-            if !task.is_done{
+        for task in tasks {
+            if !task.is_done {
                 tasks_to_show.push(task)
             }
         }
@@ -60,12 +60,17 @@ fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
         tasks_to_show = tasks
     }
 
-    if list_option.sort_by_title{
+    if list_option.sort_by_title {
         tasks_to_show.sort_by(|a, b| a.title.cmp(&b.title))
     }
 
-    if list_option.reverse{
+    if list_option.reverse {
         tasks_to_show.reverse()
+    }
+
+    if tasks_to_show.is_empty() {
+        eprintln!("You have no tasks that apply to the current filter!");
+        return;
     }
 
     let mut table = Table::new(tasks_to_show);
@@ -93,7 +98,6 @@ fn get_csv() -> Result<File, Box<dyn Error>> {
 
     let file = OpenOptions::new()
         .read(true)
-        .write(true)
         .append(true)
         .create(true)
         .open(path)?;
