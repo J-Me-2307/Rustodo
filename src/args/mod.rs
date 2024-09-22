@@ -19,6 +19,9 @@ pub enum ActionType {
     /// List your tasks
     List(ListOptions),
 
+    /// Delete a task
+    Delete(Task),
+
     /// Reset your tasks
     Reset,
 }

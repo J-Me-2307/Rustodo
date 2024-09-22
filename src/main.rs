@@ -34,6 +34,9 @@ fn run(args: RustodoArgs) -> Result<(), Box<dyn Error>> {
         ActionType::Mark(task) => {
             mark_task_as_done(file, task.title)?;
         }
+        ActionType::Delete(task) => {
+            delete_task(file, task.title)?;
+        }
         ActionType::Reset => {
             delete_csv()?;
         }
@@ -53,6 +56,20 @@ fn mark_task_as_done(file: File, title: String) -> Result<(), Box<dyn Error>>{
             task.is_done = true;
         }
         write_single_to_csv(&file, task.to_record())?;
+    }
+
+    Ok(())
+}
+
+fn delete_task(file: File, title: String) -> Result<(), Box<dyn Error>>{
+    let tasks = read_csv(&file)?;
+    delete_csv()?;
+    let file = get_csv()?;
+
+    for task in tasks{
+        if task.title != title{
+            write_single_to_csv(&file, task.to_record())?;
+        }
     }
 
     Ok(())
