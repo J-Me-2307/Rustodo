@@ -2,7 +2,7 @@ use std::{
     error::Error,
     fs::{File, OpenOptions},
     path::Path,
-    process, vec,
+    process,
 };
 
 use args::{ActionType, ListOptions, RustodoArgs, Task};
@@ -28,15 +28,31 @@ fn run(args: RustodoArgs) -> Result<(), Box<dyn Error>> {
             write_single_to_csv(&file, todo.to_record())?;
         }
         ActionType::List(list_option) => {
-            let tasks = read_csv(file)?;
+            let tasks = read_csv(&file)?;
             list_tasks(list_option, tasks);
         }
-        ActionType::Mark => {
-            todo!()
+        ActionType::Mark(task) => {
+            mark_task_as_done(file, task.title)?;
         }
         ActionType::Reset => {
             delete_csv()?;
         }
+    }
+
+    Ok(())
+}
+
+/// Marks a task as done.
+fn mark_task_as_done(file: File, title: String) -> Result<(), Box<dyn Error>>{
+    let tasks = read_csv(&file)?;
+    delete_csv()?;
+    let file = get_csv()?;
+
+    for mut task in tasks {
+        if task.title == title {
+            task.is_done = true;
+        }
+        write_single_to_csv(&file, task.to_record())?;
     }
 
     Ok(())
@@ -91,7 +107,7 @@ fn list_tasks(list_option: ListOptions, tasks: Vec<Task>) {
 }
 
 /// Reads all data from the csv
-fn read_csv(file: File) -> Result<Vec<Task>, Box<dyn Error>> {
+fn read_csv(file: &File) -> Result<Vec<Task>, Box<dyn Error>> {
     let mut tasks: Vec<Task> = Vec::new();
 
     let mut rdr = csv::Reader::from_reader(file);

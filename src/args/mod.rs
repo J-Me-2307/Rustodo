@@ -15,7 +15,7 @@ pub enum ActionType {
     /// Add a new task
     Add(Task),
     /// Mark off a task as done
-    Mark,
+    Mark(Task),
     /// List your tasks
     List(ListOptions),
 
